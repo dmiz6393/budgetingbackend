@@ -13,7 +13,12 @@ import SignInForm from "./components/SignInForm";
 import SignUpForm from "./components/SignUpForm";
 import HomePage from "./containers/HomePage";
 import WelcomePage from "./components/WelcomePage";
-import BudgetPage from "./components/BudgetPage";
+import BudgetCalculator from "./components/BudgetCalculator";
+import CreateOwnBudgetForm from "./components/CreateOwnBudgetForm";
+import BudgetDropDown from './components/BudgetDropDown'
+import ExpenseInput from './components/ExpenseInput'
+const usersUrl = "http://localhost:3000/api/v1/users";
+const categoriesUrl="http://localhost:3000/api/v1/categories"
 
 class App extends Component {
   state = {
@@ -30,7 +35,9 @@ class App extends Component {
         this.setState({
           user: {
             email: user.user.data.attributes.email,
-            user_id: user.user.data.attributes.id
+            user_id: user.user.data.attributes.id,
+            income: user.user.data.attributes.income,
+            first_name: user.user.data.attributes.first_name
           }
         });
       }
@@ -58,7 +65,8 @@ class App extends Component {
         user: {
           first_name: user.data.attributes.first_name,
           email: user.data.attributes.email,
-          user_id: user.data.attributes.id
+          user_id: user.data.attributes.id,
+          income: user.data.attributes.income
         },
         redirect: true
         //pushState()
@@ -92,11 +100,58 @@ class App extends Component {
     });
   };
 
+  setBudget = (e, budget) => {
+    fetch(usersUrl + "/" + `${this.state.user.user_id}`, {
+      method: "PATCH", // *GET, POST, PUT, DELETE, etc.
+      headers: {
+        "Content-Type": "application/json"
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      redirect: "follow", // manual, *follow, error
+      referrer: "no-referrer", // no-referrer, *client
+      body: JSON.stringify({ budget: budget }) // body data type must match "Content-Type" header
+    }).then(response => response.json()); // parses JSON response into native JavaScript objects
+  };
+
+  handleSubmitCategory= (event, value) =>{
+    event.preventDefault()
+    debugger
+    fetch(categoriesUrl, {
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      headers: {
+          'Content-Type': 'application/json',
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify({
+        name: value, 
+        user_id: this.state.user.user_id 
+      }), // body data type must match "Content-Type" header
+  })
+  .then(response => response.json()); // parses JSON response into native JavaScript objects 
+}
+    
+
+
+handleOwnSubmitCategory= (event) =>{
+  event.preventDefault()  
+  fetch(categoriesUrl, {
+    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+    headers: {
+        'Content-Type': 'application/json',
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: JSON.stringify({
+      name: event.target.expense.value, 
+      user_id: this.state.user.user_id 
+    }), // body data type must match "Content-Type" header
+})
+.then(response => response.json()); // parses JSON response into native JavaScript objects 
+}
+
   render() {
     return (
       <>
         {this.renderRedirect()}
-        {this.renderLogOut()}
         <Route
           exact
           path="/"
@@ -133,118 +188,30 @@ class App extends Component {
           exact
           path="/budget"
           render={() => (
-            <BudgetPage logOut={this.logOut} user={this.state.user} />
+            <BudgetCalculator
+              setBudget={this.setBudget}
+              logOut={this.logOut}
+              user={this.state.user}
+            />
           )}
         />
-        }
+
+        <Route
+          exact
+          path="/budgetform"
+          render={() => (
+            <CreateOwnBudgetForm
+              setBudget={this.setBudget}
+              logOut={this.logOut}
+              user={this.state.user}
+            />
+          )}
+        />
+
+        <Route exact path="/expenses" render={() => <BudgetDropDown handleOwnSubmitCategory={this.handleOwnSubmitCategory}handleSubmitCategory={this.handleSubmitCategory} />} />
       </>
     );
   }
 }
 
 export default withRouter(App);
-
-{
-  /* // import React, { Component } from "react";
-// import "./App.css";
-// import { BrowserRouter as Route, withRouter } from "react-router-dom";
-// import FormsContainer from "./containers/FormsContainer";
-// import API from "./adapters/API";
-
-// class App extends Component { */
-}
-//   state = {
-//     user: { email: null, id: null, first_name:null, last_name:null, income:0 },
-//   };
-
-//   componentDidMount() {
-//     API.validateUser().then(user => {
-//       if (user.user) {
-//         this.setState({
-//           user: {
-//             email: user.user.data.attributes.email,
-//             user_id: user.user.data.attributes.id
-//           }
-//         });
-//       }
-//     });
-//   }
-
-//   submitSignUp = user => {
-//     API.signUpUser(user).then(user => {
-//       this.setState({
-//         user: {
-//          email: user.data.attributes.email,
-//          user_id: user.data.attributes.id,
-//          first_name: user.data.attributes.first_name,
-//          last_name: user.data.attributes.last_name,
-//          income: user.data.attributes.income
-//         }
-//       });
-//     });
-//   };
-
-//   submitSignIn = user => {
-//     API.signInUser(user).then(user =>
-//       this.setState({
-//         user: {
-//           email: user.data.attributes.email,
-//           user_id: user.data.attributes.id
-//         }
-//       })
-//     );
-//   };
-
-//   logOut = () => {
-//     API.clearToken();
-//     this.setState({ user: null});
-//   };
-
-//   render() {
-//     return (
-//       <React.Fragment>
-//           <FormsContainer
-//             submitSignUp={this.submitSignUp}
-//             submitSignIn={this.submitSignIn}
-//           />
-
-//       </React.Fragment>
-//     );
-//   }
-
-// }
-
-// export default withRouter(App);
-
-{
-  /* <Router>
-          <Route
-            exact
-            path="/"
-            render={() => (
-              <HomePage
-                submitSignIn={this.submitSignIn}
-                submitSignUp={this.submitSignUp}
-              />
-            )}
-          />
-          <Route
-            exact
-            path="/signup"
-            render={() => (
-              <SignUpForm
-                submitSignUp={this.submitSignUp}
-                goBackHandler={this.goBackHandler}
-              />
-            )}
-          />
-          <Route
-            exact
-            path="/signin"
-            render={() => <SignInForm submitSignIn={this.submitSignIn} />}
-          />
-
-          <Route exact path="/welcome" render={() => <WelcomePage logOut={this.logOut} user={this.state.user}/>} />
-        </Router>
-      </> */
-}
