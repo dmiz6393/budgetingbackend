@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import ExpenseInput from "./ExpenseInput";
+import Transactions from './Transactions'
 
 class CategoryDropDown extends Component {
   state = {
@@ -16,13 +17,18 @@ class CategoryDropDown extends Component {
   
 
   render() {
+
+      const trans= this.props.categories.map(category=>{
+       return <Transactions setCategoryCost={this.props.setCategoryCost} category= {category} />
+    })
+
     return (
       <>
         <h1>Select from the dropdown or add your own category</h1>
         <form
-          onSubmit={event =>
+          onSubmit={this.state.value!=="Add" ? (event) =>
             this.props.handleSubmitCategory(event, this.state.value)
-          }
+          : null }
         >
           <select value={this.state.value} onChange={this.handleChange}>
             <option value="Transport"> Auto and Transport </option>
@@ -46,9 +52,15 @@ class CategoryDropDown extends Component {
           ) :  <input type="submit" value="Submit" />}
          
         </form>
+
+       {this.props.showCostDropDown ? trans :null }
+
       </>
     );
   }
 }
 
 export default CategoryDropDown;
+
+
+
