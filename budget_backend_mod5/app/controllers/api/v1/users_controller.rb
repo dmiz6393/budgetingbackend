@@ -2,11 +2,11 @@ class Api::V1::UsersController < ApplicationController
     skip_before_action :set_current_user, only: [:create]
 
     def index 
-        render( { json: Api::V1::UserSerializer.new(User.all) } )
+        render json: User.all, each_serializer: UserSerializer, include: '*.*.*'
     end
 
     def profile
-        render json: { user: Api::V1::UserSerializer.new(current_user) }, status: :accepted
+        render json: { user: UserSerializer.new(current_user) }, status: :accepted
     end
 
     def show
@@ -32,7 +32,7 @@ class Api::V1::UsersController < ApplicationController
         if @user.valid?
             @token = encode_token({ user_id: @user.id })
             # needed to correctly namespace serializer ...
-            render json: { user: Api::V1::UserSerializer.new(@user), jwt: @token }, status: :created
+            render json: { user: UserSerializer.new(@user), jwt: @token }, status: :created
         else
             render json: { error: 'failed to create user' }, status: :not_acceptable
         end

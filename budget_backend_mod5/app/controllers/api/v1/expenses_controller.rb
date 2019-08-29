@@ -1,12 +1,12 @@
 class Api::V1::ExpensesController < ApplicationController
 
     def index
-        render( { json: Api::V1::ExpenseSerializer.new(Expense.all) } )
+        render json: Expense.all, each_serializer: ExpenseSerializer
     end 
 
     def create
         @expense = Expense.create(expense_params)
-        render json: { user: Api::V1::ExpenseSerializer.new(@expense)}
+        render json: @expense, each_serializer: ExpenseSerializer
     end 
 
 
