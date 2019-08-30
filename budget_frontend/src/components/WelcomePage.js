@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import BudgetPage from "./BudgetPage";
 import { BrowserRouter as Router, Link, withRouter } from "react-router-dom";
+import { Icon, Button } from "semantic-ui-react";
 
 class WelcomePage extends Component {
   state = {
@@ -18,9 +19,8 @@ class WelcomePage extends Component {
       <>
         <h1>Hi, {this.props.user.first_name}, we are happy you joined! </h1>
         <h3>Take the next step and set up your budget</h3>
-        <Link to="/budget">==></Link> 
-        
-        <button onClick={this.props.logOut}>Log out</button> 
+        <Link  to="/budget"> <div> <Icon className="angle double right icon huge inverted"></Icon> </div></Link> 
+        <Button onClick={this.props.logOut}>Log out</Button> 
       </>
     );
   }

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import ExpenseInput from "./ExpenseInput";
-import Transactions from './Transactions'
+import Transactions from "./Transactions";
+import { Link } from "react-router-dom";
 
 class CategoryDropDown extends Component {
   state = {
@@ -10,25 +11,31 @@ class CategoryDropDown extends Component {
 
   handleChange = event => {
     event.preventDefault();
-      this.setState({
-        value: event.target.value
-      });
-    }
-  
+    this.setState({
+      value: event.target.value
+    });
+  };
 
   render() {
-
-      const trans= this.props.categories.map(category=>{
-       return <Transactions setCategoryCost={this.props.setCategoryCost} category= {category} />
-    })
+    const trans = this.props.categories.map(category => {
+      return (
+        <Transactions
+          setCategoryCost={this.props.setCategoryCost}
+          category={category}
+        />
+      );
+    });
 
     return (
       <>
         <h1>Select from the dropdown or add your own category</h1>
         <form
-          onSubmit={this.state.value!=="Add" ? (event) =>
-            this.props.handleSubmitCategory(event, this.state.value)
-          : null }
+          onSubmit={
+            this.state.value !== "Add"
+              ? event =>
+                  this.props.handleSubmitCategory(event, this.state.value)
+              : null
+          }
         >
           <select value={this.state.value} onChange={this.handleChange}>
             <option value="Transport"> Auto and Transport </option>
@@ -46,21 +53,20 @@ class CategoryDropDown extends Component {
           </select>
           {this.state.value === "Add" ? (
             <form onSubmit={this.props.handleOwnSubmitCategory}>
-            <input name="expense" type="text" ></input>
-            <input type="submit" value="Submit" />
-        </form>
-          ) :  <input type="submit" value="Submit" />}
-         
+              <input name="expense" type="text"></input>
+              <input type="submit" value="Submit" />
+            </form>
+          ) : (
+            <input type="submit" value="Add" />
+          )}
         </form>
 
-       {this.props.showCostDropDown ? trans :null }
+        {this.props.showCostDropDown ? trans : null}
 
+        <Link to='/profile'><h5 onClick={this.props.fetchUserInfo}>See my profile</h5></Link>
       </>
     );
   }
 }
 
 export default CategoryDropDown;
-
-
-

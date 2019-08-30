@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import HomePageContainer from "./containers/HomePageContainer";
 import API from "./adapters/API";
+import "./App.css";
+
 import {
   BrowserRouter as Router,
   Route,
@@ -17,6 +19,8 @@ import BudgetCalculator from "./components/BudgetCalculator";
 import CreateOwnBudgetForm from "./components/CreateOwnBudgetForm";
 import BudgetDropDown from "./components/BudgetDropDown";
 import ExpenseInput from "./components/ExpenseInput";
+import ProfilePage from './components/ProfilePage'
+
 const usersUrl = "http://localhost:3000/api/v1/users";
 const categoriesUrl = "http://localhost:3000/api/v1/categories";
 const expensesUrl = "http://localhost:3000/api/v1/expenses";
@@ -76,6 +80,11 @@ class App extends Component {
       })
     );
   };
+
+  fetchUserInfo=()=>{
+  fetch(usersUrl + "/" + `${this.state.user.user_id}`)
+  .then(response => response.json()).then(res=>console.log(res)) // parses JSON response into native JavaScript objects 
+}
 
   renderRedirect = () => {
     if (this.state.redirect) {
@@ -155,7 +164,6 @@ class App extends Component {
   };
 
   setCategoryCost = (e, category) => {
-    debugger;
     e.preventDefault();
     fetch(expensesUrl, {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
@@ -172,7 +180,7 @@ class App extends Component {
 
   render() {
     return (
-      <>
+      <div className="App">
         {this.renderRedirect()}
         <Route
           exact
@@ -240,10 +248,20 @@ class App extends Component {
               categories={this.state.categories}
               showCostDropDown={this.state.showCostDropDown}
               setCategoryCost={this.setCategoryCost}
+              fetchUserInfo={this.fetchUserInfo}
             />
           )}
         />
-      </>
+
+        <Route
+          exact
+          path="/profile"
+          render={() => (
+            <ProfilePage fetchUserInfo={this.fetchUserInfo}
+            />
+          )}
+        />
+      </div>
     );
   }
 }
