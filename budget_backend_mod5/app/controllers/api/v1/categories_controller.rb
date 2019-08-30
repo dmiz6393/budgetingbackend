@@ -1,12 +1,12 @@
 class Api::V1::CategoriesController < ApplicationController
 
     def index
-        render( { json: Api::V1::CategorySerializer.new(Category.all) } )
+        render json: Category.all, each_serializer: CategorySerializer
     end 
 
     def create
         @category = Category.create(category_params)
-        render json: { user: Api::V1::CategorySerializer.new(@category)}
+        render json: @category, each_serializer: CategorySerializer
     end 
 
 

@@ -1,15 +1,15 @@
 import React, { Component } from "react";
-import BudgetDropDown from "./BudgetDropDown";
+import { Form, Button, Container, Icon } from "semantic-ui-react";
 
-import { BrowserRouter as Router, Link, withRouter } from "react-router-dom";
-import PercentageForm from "./PercentageForm";
+import { BrowserRouter as Link, NavLink } from "react-router-dom";
 
 class BudgetCalculator extends Component {
   state = {
     showSaving: false,
     save: 0,
     showBudget: false,
-    budget: 0
+    budget: 0,
+    showArrow: false
   };
 
   handleChange = event => {
@@ -35,33 +35,47 @@ class BudgetCalculator extends Component {
     });
   };
 
-  
+  handleClick = e => {
+    this.props.setBudget(e, this.state.budget);
+    this.setState({
+      showArrow: true
+    });
+  };
 
   render() {
     // this.budgetCalculator()
     return (
-      <>
-        <form onSubmit={this.handleChange}>
-          <label>
-            How much would you like to save?
-            <input name="goal" type="text" />
-          </label>
-          <label>
-            At what age would you like to have this saved by?
-            <input name="older" type="text" />
-          </label>
-          <label>
-            How old are you now?
-            <input name="age" type="text" />
-          </label>
-          <input type="submit" />
-        </form>
+      <Container>
+        <Form onSubmit={this.handleChange}>
+          <Form.Field widths="equal">
+            <Form.Input
+              fluid
+              label="How much would you like to save?"
+              name="goal"
+              type="text"
+            />
+            <Form.Input
+              fluid
+              label="At what age would you like to have this saved by?"
+              name="older"
+              type="text"
+            />
+            <Form.Input
+              fluid
+              label="How old are you now?"
+              name="age"
+              type="text"
+            />
+            <Form.Button> Submit </Form.Button>
+          </Form.Field>
+        </Form>
+
         {this.state.showSaving ? (
           <>
             <h1> You will need to save {this.state.save} a month </h1>{" "}
-            <button onClick={this.budgetCalculator}>
-              Calculate my budget{" "}
-            </button>
+            <Button onClick={this.budgetCalculator}>
+              Calculate My Budget{" "}
+            </Button>
           </>
         ) : null}
         {this.state.showBudget ? (
@@ -70,11 +84,21 @@ class BudgetCalculator extends Component {
             <h1>
               To save this, your monthly budget should be {this.state.budget}
             </h1>{" "}
-            <button onClick={(e)=>this.props.setBudget(e, this.state.budget)}>Set this as my budget</button>{" "}
-            <button><Link to='/budgetform'> Create my own budget</Link>{" "}</button>
+            <Button onClick={this.handleClick}>Set this as my budget</Button>{" "}
+            {this.state.showArrow ? (
+              <div>
+                <NavLink to="/expenses">
+                  <Icon className="angle double right icon huge inverted"/>
+                </NavLink>
+              </div>
+            ) : (
+              <Button>
+                <Link to="/budgetform"> Create my own budget</Link>{" "}
+              </Button>
+            )}
           </>
         ) : null}
-      </>
+      </Container>
     );
   }
 }
