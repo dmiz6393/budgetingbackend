@@ -5,7 +5,7 @@ Rails.application.routes.draw do
       get '/validate', to: 'auth#validate_token'
       post "/login", to: "auth#create"
       get '/profile', to: 'users#profile'
-      resources :users, only: [ :show, :create, :index, :update ]
+      resources :users, only: [ :show, :create, :index, :update, :destroy ]
       resources :categories
       resources :expenses
     end

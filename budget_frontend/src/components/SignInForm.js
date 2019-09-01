@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Form, Button } from "semantic-ui-react";
-import '../App.css';
+
 
 class SignInForm extends Component {
   state = {
@@ -21,13 +21,13 @@ class SignInForm extends Component {
 
   render() {
     return (
-      <div className="App">
+      <div className="form-container">
         <h1>Sign In</h1>
         <Form onSubmit={this.handleSubmit}>
           <Form.Field required>
             <label>Email:</label>
             <input
-              type="text"
+              type="email"
               placeholder="email"
               name="email"
               onChange={this.handleChange}

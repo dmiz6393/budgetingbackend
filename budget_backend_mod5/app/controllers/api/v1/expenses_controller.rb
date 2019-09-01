@@ -9,6 +9,11 @@ class Api::V1::ExpensesController < ApplicationController
         render json: @expense, each_serializer: ExpenseSerializer
     end 
 
+    def destroy
+        @expense = Expense.find(params[:id])
+        @expense.destroy
+    end
+
 
     private    
     def expense_params

@@ -6,8 +6,10 @@
     "d3": "^5.11.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "react-minimal-pie-chart": "^5.0.0",
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.1.1",
+    "recharts": "^1.7.1",
     "semantic-ui-react": "^0.88.0"
   },
   "scripts": {

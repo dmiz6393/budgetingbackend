@@ -1,16 +1,14 @@
 import React, { Component } from "react";
-import HomePageContainer from "./containers/HomePageContainer";
 import API from "./adapters/API";
 import "./App.css";
 
 import {
   BrowserRouter as Router,
   Route,
-  Link,
-  Switch,
   Redirect,
   withRouter
 } from "react-router-dom";
+import { Button } from "semantic-ui-react";
 import SignInForm from "./components/SignInForm";
 import SignUpForm from "./components/SignUpForm";
 import HomePage from "./containers/HomePage";
@@ -18,25 +16,31 @@ import WelcomePage from "./components/WelcomePage";
 import BudgetCalculator from "./components/BudgetCalculator";
 import CreateOwnBudgetForm from "./components/CreateOwnBudgetForm";
 import BudgetDropDown from "./components/BudgetDropDown";
-import ExpenseInput from "./components/ExpenseInput";
-import ProfilePage from './components/ProfilePage'
+import ProfilePage from "./components/ProfilePage";
+import EditIncome from "./components/EditIncome";
 
 const usersUrl = "http://localhost:3000/api/v1/users";
 const categoriesUrl = "http://localhost:3000/api/v1/categories";
 const expensesUrl = "http://localhost:3000/api/v1/expenses";
+const now = new Date();
+const year = now.getFullYear();
 
 class App extends Component {
   state = {
     user: null,
     showSignIn: false,
     showSignUp: false,
-    redirect: false,
+    redirectSignIn: false,
+    redirectSignUp: false,
     loggedOut: false,
     categories: [],
-    showCostDropDown: false
+    showCostDropDown: false,
+    date: null,
+    dateNum: null
   };
 
   componentDidMount() {
+    this.getMonth();
     API.validateUser().then(user => {
       if (user.user) {
         this.setState({
@@ -61,7 +65,7 @@ class App extends Component {
           last_name: user.last_name,
           income: user.income
         },
-        redirect: true
+        redirectSignUp: true
       });
     });
   };
@@ -73,24 +77,65 @@ class App extends Component {
           first_name: user.first_name,
           email: user.email,
           user_id: user.id,
-          income: user.income
+          income: user.income,
+          budget: user.budget,
+          categories: user.categories
         },
-        redirect: true
+        redirectSignIn: true
         //pushState()
       })
     );
   };
 
-  fetchUserInfo=()=>{
-  fetch(usersUrl + "/" + `${this.state.user.user_id}`)
-  .then(response => response.json()).then(res=>console.log(res)) // parses JSON response into native JavaScript objects 
-}
+  getMonth = () => {
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ];
+    const month = now.getMonth();
 
-  renderRedirect = () => {
-    if (this.state.redirect) {
+    const date = months[month] + " " + year;
+    const dateNum = year + "-" + 0 + (month + 1);
+    this.setState({
+      date: date,
+      dateNum: dateNum
+    });
+  };
+
+  fetchUserInfo = () => {
+    fetch(usersUrl + "/" + `${this.state.user.user_id}`)
+      .then(response => response.json())
+      .then(res =>
+        this.setState({
+          user: res, 
+          redirectSignIn: true
+        })
+       
+      ).then(this.renderRedirectSignIn())
+  };
+
+  renderRedirectSignIn = () => {
+    if (this.state.redirectSignIn) {
+      return <Redirect to="/profile" />;
+    }
+  };
+
+  renderRedirectSignUp = () => {
+    if (this.state.redirectSignUp) {
       return <Redirect to="/welcome" />;
     }
   };
+
   renderLogOut = () => {
     if (this.state.loggedOut) return <Redirect to="/" />;
   };
@@ -150,6 +195,7 @@ class App extends Component {
 
   handleOwnSubmitCategory = event => {
     event.preventDefault();
+   
     fetch(categoriesUrl, {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       headers: {
@@ -178,10 +224,43 @@ class App extends Component {
     }).then(response => response.json()); // parses JSON response into native JavaScript objects
   };
 
+  deleteAccount = () => {
+    fetch(usersUrl + "/" + `${this.state.user.user_id}`, {
+      method: "DELETE"
+    }).then(this.props.history.push(`/`));
+  };
+
+  changeDate = event => {
+    const selectedMonth = event.target.name.value + " " + year;
+    const numberDate = year + "-" + 0 + event.target.value;
+    this.setState({
+      date: selectedMonth,
+      dateNum: numberDate
+    });
+  };
+
+  updateIncome = e => {
+    e.preventDefault();
+    return fetch(usersUrl + "/" + `${this.state.user.user_id}`, {
+      method: "PATCH",
+      headers: {},
+      body: JSON.stringify({
+        income: Number(e.target.income.value)
+      })
+    }).then(response => response.json());
+  };
+
+  addToExpenses=()=>{
+    this.setState({
+      addToExpense: !this.state.addToExpense
+    })
+  }
+
   render() {
     return (
       <div className="App">
-        {this.renderRedirect()}
+        {this.renderRedirectSignIn()}
+        {this.renderRedirectSignUp()}
         <Route
           exact
           path="/"
@@ -257,10 +336,29 @@ class App extends Component {
           exact
           path="/profile"
           render={() => (
-            <ProfilePage fetchUserInfo={this.fetchUserInfo}
+            <ProfilePage
+              logOut={this.logOut}
+              dateNum={this.state.dateNum}
+              date={this.state.date}
+              user={this.state.user}
+              changeDate={this.changeDate}
+              deleteAccount={this.deleteAccount}
             />
           )}
         />
+
+        <Route
+          exact
+          path="/income"
+          render={() => (
+            <EditIncome
+              updateIncome={this.updateIncome}
+              user={this.state.user}
+            />
+          )}
+        />
+
+        
       </div>
     );
   }

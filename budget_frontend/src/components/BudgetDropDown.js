@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import ExpenseInput from "./ExpenseInput";
 import Transactions from "./Transactions";
 import { Link } from "react-router-dom";
+import { Dropdown, Button } from "semantic-ui-react";
 
 class CategoryDropDown extends Component {
   state = {
@@ -28,7 +29,10 @@ class CategoryDropDown extends Component {
 
     return (
       <>
-        <h1>Select from the dropdown or add your own category</h1>
+        <h1>
+          Add your expenses. How much of each category have you spent
+          this month?
+        </h1>
         <form
           onSubmit={
             this.state.value !== "Add"
@@ -37,7 +41,11 @@ class CategoryDropDown extends Component {
               : null
           }
         >
-          <select value={this.state.value} onChange={this.handleChange}>
+          <select
+            class="select-css"
+            value={this.state.value}
+            onChange={this.handleChange}
+          >
             <option value="Transport"> Auto and Transport </option>
             <option value="Bills and Utilities">Bills and Utilities </option>
             <option value="Education"> Education </option>
@@ -51,19 +59,26 @@ class CategoryDropDown extends Component {
             <option value="Travel"> Travel </option>
             <option value="Add"> Add my own </option>
           </select>
+
           {this.state.value === "Add" ? (
             <form onSubmit={this.props.handleOwnSubmitCategory}>
               <input name="expense" type="text"></input>
               <input type="submit" value="Submit" />
             </form>
           ) : (
-            <input type="submit" value="Add" />
+            <Button>
+              {" "}
+              <input type="submit" value="Add" />{" "}
+            </Button>
           )}
         </form>
 
         {this.props.showCostDropDown ? trans : null}
-
-        <Link to='/profile'><h5 onClick={this.props.fetchUserInfo}>See my profile</h5></Link>
+        <div>
+          <Button onClick={this.props.fetchUserInfo}>
+            See my profile
+          </Button>
+        </div>
       </>
     );
   }

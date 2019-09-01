@@ -32,10 +32,17 @@ class Api::V1::UsersController < ApplicationController
         if @user.valid?
             @token = encode_token({ user_id: @user.id })
             # needed to correctly namespace serializer ...
-            render json: { user: UserSerializer.new(@user), jwt: @token }, status: :created
+            render json: { user: UserSerializer.new(@user), jwt: @token}, status: :created
         else
             render json: { error: 'failed to create user' }, status: :not_acceptable
         end
+    end
+
+
+    def destroy
+        @user = User.find(params[:id])
+        @user.destroy
+        render json: { message: "This user has been deleted." }
     end
     
     private    

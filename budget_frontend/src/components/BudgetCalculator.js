@@ -25,13 +25,12 @@ class BudgetCalculator extends Component {
   };
 
   budgetCalculator = () => {
-    console.log(this.props.user.income);
     const monthlySalary = parseInt(this.props.user.income) / 12;
-    console.log(monthlySalary);
-    const budget = monthlySalary - parseInt(this.state.save);
+    const budget = monthlySalary - this.state.save;
+    budget<0 ? alert("You aren't making enough to save that amount, please set a new goal"):   
     this.setState({
       showBudget: true,
-      budget: Number(budget)
+      budget: budget
     });
   };
 
@@ -52,19 +51,19 @@ class BudgetCalculator extends Component {
               fluid
               label="How much would you like to save?"
               name="goal"
-              type="text"
+              type="number"
             />
             <Form.Input
               fluid
               label="At what age would you like to have this saved by?"
               name="older"
-              type="text"
+              type="number"
             />
             <Form.Input
               fluid
               label="How old are you now?"
               name="age"
-              type="text"
+              type="number"
             />
             <Form.Button> Submit </Form.Button>
           </Form.Field>
@@ -92,9 +91,11 @@ class BudgetCalculator extends Component {
                 </NavLink>
               </div>
             ) : (
+              <NavLink to="/budgetform">
               <Button>
-                <Link to="/budgetform"> Create my own budget</Link>{" "}
+                Create my own budget
               </Button>
+              </NavLink>
             )}
           </>
         ) : null}
