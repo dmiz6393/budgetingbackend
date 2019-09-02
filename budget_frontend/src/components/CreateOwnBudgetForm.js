@@ -19,20 +19,10 @@ class CreateOwnBudgetForm extends Component {
       <div>
         <form onSubmit={e => this.props.setBudget(e, this.state.budget)}>
           <input onChange={this.submitButton} name="budget" type="number" />
-          <input type="submit" />
+         <Button><input type="submit" /></Button> 
         </form>
-       
-
-        <Button onClick={this.props.fetchUserInfo}>
-            Done for now 
-          </Button>
-          <Link to= '/expenses' ><button>Expenses</button> </Link>
-        <Link to ="/profile">
-          <Button>
-            Next
-          </Button>
-          </Link>
-
+          <Link to= '/profile' ><Button> My profile</Button> </Link>
+          <Link to= '/expenses' ><Button> My expenses</Button> </Link>
       </div>
       
     );
