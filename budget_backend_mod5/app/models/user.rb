@@ -3,6 +3,6 @@ class User < ApplicationRecord
     has_many :categories , dependent: :destroy
     has_many :expenses, through: :categories, dependent: :destroy
 
-  validates :email, uniqueness: { case_sensitive: false }
-  validates :password_digest, length: { minimum: 3 }
+    validates :email, uniqueness: { case_sensitive: false }
+    validates :password_digest, length: { minimum: 3 }
 end

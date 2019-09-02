@@ -319,8 +319,7 @@ class App extends Component {
         category_id: category.id,
         amount: Number(category.expenses[0].amount) + Number(e.target.exp.value)
       })
-    }).then(response => response.json())
-    this.fetchUserInfo()
+    }).then(response => response.json()).then(()=>this.fetchUserInfo())
   };
 
   render() {
