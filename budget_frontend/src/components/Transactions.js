@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 
-import { BrowserRouter as Router, Link, withRouter } from "react-router-dom";
-
 class Transactions extends Component {
   render() {
     return (
@@ -10,7 +8,7 @@ class Transactions extends Component {
         <form
           onSubmit={(e)=>this.props.setCategoryCost(e, this.props.category)}
         >
-          <input name="cost" type="text" placeholder="cost"></input>
+          <input name="cost" type="number" placeholder="cost"></input>
           <input type="submit"/> 
         </form>
       </div>

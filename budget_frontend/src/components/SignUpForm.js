@@ -5,20 +5,30 @@ class SignUpForm extends Component {
   state = {
     email: "",
     password: "",
-    first_name: "", 
-    last_name: "", 
-    income: 0
+    first_name: "",
+    last_name: "",
+    income: ""
   };
 
   handleChange = e => {
-    this.setState({
-      [e.target.name]: e.target.value
-    });
+    if (e.target.name === "income" && isNaN(e.target.value) === true) {
+      alert("You must fill in a number");
+    } else {
+      this.setState({
+        [e.target.name]: e.target.value
+      });
+    }
   };
 
   handleSubmit = e => {
     e.preventDefault();
-    this.props.submitSignUp(this.state);
+    const elements = e.target.getElementsByClassName("required field");
+    let arry = Array.from(elements);
+    const innerT = arry.map(element => element.children[1].defaultValue);
+    innerT.splice(2, 2);
+    innerT.includes("")
+      ? alert("You need to fill in the required fields")
+      : this.props.submitSignUp(this.state);
   };
 
   render() {
@@ -29,7 +39,7 @@ class SignUpForm extends Component {
           <Form.Field required>
             <label>Email:</label>
             <input
-              type="text"
+              type="email"
               placeholder="email"
               value={this.state.email}
               onChange={this.handleChange}
@@ -47,23 +57,23 @@ class SignUpForm extends Component {
             />
           </Form.Field>
 
-          <Form.Field required>
+          <Form.Field>
             <label>First Name:</label>
             <input
               type="text"
               placeholder="first name"
-            //   value={this.state.first_name}
+              //   value={this.state.first_name}
               onChange={this.handleChange}
               name="first_name"
             />
           </Form.Field>
 
-          <Form.Field required>
+          <Form.Field>
             <label>Last Name:</label>
             <input
               type="text"
               placeholder="last name"
-            //   value={this.state.last_name}
+              //   value={this.state.last_name}
               onChange={this.handleChange}
               name="last_name"
             />
@@ -73,14 +83,16 @@ class SignUpForm extends Component {
             <label>Income:</label>
             <input
               type="text"
-              placeholder="income"
+              placeholder="You annual income after tax"
               value={this.state.income}
               onChange={this.handleChange}
               name="income"
             />
           </Form.Field>
 
-          <Button type="submit" fluid>sign up</Button>
+          <Button type="submit" fluid>
+            sign up
+          </Button>
         </Form>
       </div>
     );

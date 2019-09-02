@@ -21,7 +21,7 @@ class Api::V1::UsersController < ApplicationController
 
     def update 
         @user= User.find params[:id]
-        if @user.update(budget: params[:budget].to_i)
+        if @user.update(budget: params[:budget].to_i, income: params[:income] )
             render json: @user
         end
     end 
@@ -32,10 +32,17 @@ class Api::V1::UsersController < ApplicationController
         if @user.valid?
             @token = encode_token({ user_id: @user.id })
             # needed to correctly namespace serializer ...
-            render json: { user: UserSerializer.new(@user), jwt: @token }, status: :created
+            render json: { user: UserSerializer.new(@user), jwt: @token}, status: :created
         else
             render json: { error: 'failed to create user' }, status: :not_acceptable
         end
+    end
+
+
+    def destroy
+        @user = User.find(params[:id])
+        @user.destroy
+        render json: { message: "This user has been deleted." }
     end
     
     private    
