@@ -1,4 +1,4 @@
 class Expense < ApplicationRecord
-    belongs_to :category, dependent: :destroy
+    belongs_to :category
     has_one :user, through: :category
 end
