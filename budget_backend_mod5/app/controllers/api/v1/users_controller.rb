@@ -21,7 +21,7 @@ class Api::V1::UsersController < ApplicationController
 
     def update 
         @user= User.find params[:id]
-        if @user.update(budget: params[:budget].to_i)
+        if @user.update(budget: params[:budget].to_i, income: params[:income] )
             render json: @user
         end
     end 

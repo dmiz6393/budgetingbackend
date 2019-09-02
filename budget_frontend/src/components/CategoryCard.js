@@ -1,7 +1,12 @@
 import React, { Component } from "react";
+import { Button } from "semantic-ui-react";
+import AddToExpense from "./AddToExpense";
 
 class CategoryCard extends Component {
- 
+  state = {
+    showExpenseForm: false
+  };
+
   getExpenses = () => {
     if (
       this.props.category.expenses.length !== 0 ||
@@ -13,22 +18,41 @@ class CategoryCard extends Component {
     }
   };
 
+  showExpense = () => {
+    this.setState({
+      showExpenseForm: !this.state.showExpenseForm
+    });
+  };
+
+  handleChange=()=>{
+    this.setState({
+      showExpenseForm: !this.state.showExpenseForm, 
+    })
+  }
+
+  handleSubmit=(e)=>{
+    this.props.addExpenses(e, this.props.category)
+    this.setState({
+      showExpenseForm: !this.state.showExpenseForm
+    })
+  }
   render() {
     return (
-      <div>
-        Category: {this.props.category.name}{" "}
-        Expenses: {this.getExpenses()}
-        {/* <button onClick={this.props.addToExpenses}> Add to this expense</button>
-
-        {this.props.addToExpense ? (
-          <div>
-          <form>
-            {" "}
-            <input type="number"></input> <input type="submit"> + </input>{" "}
-          </form>
-          </div>
-        ) : null} */}
-      </div>
+      <>
+        <div>
+          <h5> Category: {this.props.category.name} </h5>
+          <h5> Expenses: {this.getExpenses()} </h5>
+          <Button onClick={this.showExpense}> + </Button>
+        </div>
+        <div>
+          {this.state.showExpenseForm ? (
+            <form onSubmit={this.handleSubmit}>
+              <input name= "exp" type="number" />
+              <input type="submit"/> 
+            </form>
+          ) : <div></div>}
+        </div>
+      </>
     );
   }
 }

@@ -1,14 +1,25 @@
 import React, { Component } from "react";
-import ExpenseInput from "./ExpenseInput";
 import Transactions from "./Transactions";
 import { Link } from "react-router-dom";
-import { Dropdown, Button } from "semantic-ui-react";
+import {Button } from "semantic-ui-react";
 
 class CategoryDropDown extends Component {
   state = {
     value: "Education",
     showNext: false
   };
+
+  // shouldComponentUpdate(nextProps, nextState)
+
+  componentDidMount(){
+    this.setState({
+    value: "Education",
+    showNext: false
+    })
+  }
+
+  componentWillUnmount(){}
+
 
   handleChange = event => {
     event.preventDefault();
@@ -86,7 +97,7 @@ this.setState({
           </Button>
 {this.state.showNext ? 
         <Link to ="/profile">
-          <Button>
+          <Button >
             Next
           </Button>
           </Link> :null 

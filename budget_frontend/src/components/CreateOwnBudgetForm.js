@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Link, withRouter } from "react-router-dom";
-import { Dropdown, Button } from "semantic-ui-react";
+import { BrowserRouter as Router, Link } from "react-router-dom";
+import { Button } from "semantic-ui-react";
 
 class CreateOwnBudgetForm extends Component {
   state = {

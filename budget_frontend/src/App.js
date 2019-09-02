@@ -71,23 +71,21 @@ class App extends Component {
   };
 
   submitSignIn = user => {
-    API.signInUser(user)
-      .then(user =>
-        this.setState({
-          user: {
-            first_name: user.first_name,
-            email: user.email,
-            user_id: user.id,
-            income: user.income,
-            budget: user.budget,
-            categories: user.categories
-          }, 
-          redirectSignIn: true
-        })
-      )
+    API.signInUser(user).then(user =>
+      this.setState({
+        user: {
+          first_name: user.first_name,
+          email: user.email,
+          user_id: user.id,
+          income: user.income,
+          budget: user.budget,
+          categories: user.categories
+        },
+        redirectSignIn: true
+      })
+    );
   };
 
- 
   getMonth = () => {
     const months = [
       "January",
@@ -126,11 +124,23 @@ class App extends Component {
       .then(response => response.json())
       .then(res =>
         this.setState({
-          user: res
+          user: {
+            first_name: res.first_name,
+            email: res.email,
+            user_id: res.id,
+            income: res.income,
+            budget: res.budget,
+            categories: res.categories
+          }
         })
       );
   };
 
+  changeState = () => {
+    this.setState({
+      showCostDropDown: false
+    });
+  };
   //when I set the budget again, user.id and userid
 
   renderRedirectSignIn = () => {
@@ -184,26 +194,28 @@ class App extends Component {
         headers: {
           "Content-Type": "application/json"
         },
-        redirect: "follow", // manual, *follow, error
-        referrer: "no-referrer", // no-referrer, *client
-        body: JSON.stringify({ budget: budget }) // body data type must match "Content-Type" header
+        body: JSON.stringify({
+          income: this.state.user.income,
+          budget: budget
+        })
       }
-    ).then(response => response.json()); // parses JSON response into native JavaScript objects
+    ).then(response => response.json()).then(res=>this.setState({
+      income: res.income, 
+      budget:res.budget 
+    }))
   };
 
   handleSubmitCategory = (event, value) => {
-    
     event.preventDefault();
     fetch(categoriesUrl, {
-      method: "POST", // *GET, POST, PUT, DELETE, etc.
+      method: "POST",
       headers: {
         "Content-Type": "application/json"
-        // 'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: JSON.stringify({
         name: value,
         user_id: this.state.user.user_id
-      }) // body data type must match "Content-Type" header
+      })
     })
       .then(response => response.json())
       .then(res =>
@@ -211,7 +223,7 @@ class App extends Component {
           categories: [...this.state.categories, res],
           showCostDropDown: true
         })
-      ); // parses JSON response into native JavaScript objects
+      );
   };
 
   handleOwnSubmitCategory = event => {
@@ -227,23 +239,28 @@ class App extends Component {
         name: event.target.expense.value,
         user_id: this.state.user.user_id
       }) // body data type must match "Content-Type" header
-    }).then(response => response.json()); // parses JSON response into native JavaScript objects
+    })
+      .then(response => response.json())
+      .then(res =>
+        this.setState({
+          categories: [...this.state.categories, res],
+          showCostDropDown: true
+        })
+      ); // parses JSON response into native JavaScript objects
   };
 
   setCategoryCost = (e, category) => {
-  
     e.preventDefault();
     fetch(expensesUrl, {
-      method: "POST", // *GET, POST, PUT, DELETE, etc.
+      method: "POST",
       headers: {
         "Content-Type": "application/json"
-        // 'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: JSON.stringify({
         amount: e.target.cost.value,
         category_id: category.id
-      }) // body data type must match "Content-Type" header
-    }).then(response => response.json()); // parses JSON response into native JavaScript objects
+      })
+    }).then(response => response.json());
   };
 
   deleteAccount = () => {
@@ -282,15 +299,29 @@ class App extends Component {
           budget: this.state.user.budget
         })
       }
-    ).then(response => response.json());
+    ).then(response => response.json())
+      .then(res =>
+        this.setState({
+          income: res.income,
+          budget: res.budget
+        })
+      );
   };
 
   //updating income changes my budget
 
-  addToExpenses = () => {
-    this.setState({
-      addToExpense: !this.state.addToExpense
-    });
+  addExpenses = (e, category) => {
+    e.preventDefault();
+    fetch(expensesUrl + "/" + `${category.expenses[0].id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        category_id: category.id,
+        amount: Number(category.expenses[0].amount) + Number(e.target.exp.value)
+      })
+    }).then(response => response.json()).then(res=>console.log(res))
   };
 
   render() {
@@ -381,6 +412,8 @@ class App extends Component {
               user={this.state.user}
               changeDate={this.changeDate}
               deleteAccount={this.deleteAccount}
+              changeState={this.changeState}
+              addExpenses={this.addExpenses}
             />
           )}
         />

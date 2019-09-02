@@ -2,7 +2,7 @@ import React from "react";
 import CategoryCard from "./CategoryCard";
 import { Button } from "semantic-ui-react";
 import { Link } from "react-router-dom";
-import { PieChart, Pie, Sector, Cell } from "recharts";
+import { PieChart, Pie, Cell } from "recharts";
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
 const RADIAN = Math.PI / 180;
@@ -71,7 +71,7 @@ class ProfilePage extends React.Component {
         this.props.user.categories.filter(category => {
             return category.expenses[0].created_at.includes(this.props.dateNum);
           }).map(category => {
-        return <CategoryCard category={category} />;
+        return <CategoryCard addExpenses={this.props.addExpenses} category={category} />;
       }) ;
 
     return (
@@ -157,7 +157,7 @@ class ProfilePage extends React.Component {
           </Link>
           <Button onClick={this.props.deleteAccount}>Delete My Account</Button>
           <Link to="/expenses">
-            <Button>Add an Expense </Button>{" "}
+            <Button onClick={this.props.changeState}>Add an Expense </Button>{" "}
           </Link>
         </div>
         <Button onClick={this.props.logOut}>Log out</Button>
