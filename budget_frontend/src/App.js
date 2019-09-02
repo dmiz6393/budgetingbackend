@@ -71,22 +71,23 @@ class App extends Component {
   };
 
   submitSignIn = user => {
-    API.signInUser(user).then(user =>
-      this.setState({
-        user: {
-          first_name: user.first_name,
-          email: user.email,
-          user_id: user.id,
-          income: user.income,
-          budget: user.budget,
-          categories: user.categories
-        },
-        redirectSignIn: true
-        //pushState()
-      })
-    );
+    API.signInUser(user)
+      .then(user =>
+        this.setState({
+          user: {
+            first_name: user.first_name,
+            email: user.email,
+            user_id: user.id,
+            income: user.income,
+            budget: user.budget,
+            categories: user.categories
+          }, 
+          redirectSignIn: true
+        })
+      )
   };
 
+ 
   getMonth = () => {
     const months = [
       "January",
@@ -113,16 +114,24 @@ class App extends Component {
   };
 
   fetchUserInfo = () => {
-    fetch(usersUrl + "/" + `${this.state.user.user_id}`)
+    fetch(
+      usersUrl +
+        "/" +
+        `${
+          this.state.user.user_id !== undefined
+            ? this.state.user.user_id
+            : this.state.user.id
+        }`
+    )
       .then(response => response.json())
       .then(res =>
         this.setState({
-          user: res, 
-          redirectSignIn: true
+          user: res
         })
-       
-      ).then(this.renderRedirectSignIn())
+      );
   };
+
+  //when I set the budget again, user.id and userid
 
   renderRedirectSignIn = () => {
     if (this.state.redirectSignIn) {
@@ -142,6 +151,9 @@ class App extends Component {
 
   logOut = () => {
     API.clearToken();
+    this.setState({
+      user: null
+    });
     this.props.history.push(`/`);
   };
 
@@ -159,19 +171,28 @@ class App extends Component {
 
   setBudget = (e, budget) => {
     e.preventDefault();
-    fetch(usersUrl + "/" + `${this.state.user.user_id}`, {
-      method: "PATCH", // *GET, POST, PUT, DELETE, etc.
-      headers: {
-        "Content-Type": "application/json"
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      redirect: "follow", // manual, *follow, error
-      referrer: "no-referrer", // no-referrer, *client
-      body: JSON.stringify({ budget: budget }) // body data type must match "Content-Type" header
-    }).then(response => response.json()); // parses JSON response into native JavaScript objects
+    fetch(
+      usersUrl +
+        "/" +
+        `${
+          this.state.user.user_id !== undefined
+            ? this.state.user.user_id
+            : this.state.user.id
+        }`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        redirect: "follow", // manual, *follow, error
+        referrer: "no-referrer", // no-referrer, *client
+        body: JSON.stringify({ budget: budget }) // body data type must match "Content-Type" header
+      }
+    ).then(response => response.json()); // parses JSON response into native JavaScript objects
   };
 
   handleSubmitCategory = (event, value) => {
+    
     event.preventDefault();
     fetch(categoriesUrl, {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
@@ -195,7 +216,7 @@ class App extends Component {
 
   handleOwnSubmitCategory = event => {
     event.preventDefault();
-   
+
     fetch(categoriesUrl, {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
       headers: {
@@ -210,6 +231,7 @@ class App extends Component {
   };
 
   setCategoryCost = (e, category) => {
+  
     e.preventDefault();
     fetch(expensesUrl, {
       method: "POST", // *GET, POST, PUT, DELETE, etc.
@@ -231,7 +253,8 @@ class App extends Component {
   };
 
   changeDate = event => {
-    const selectedMonth = event.target.name.value + " " + year;
+    const selectedMonth =
+      event.target.children[event.target.value].innerText + " " + year;
     const numberDate = year + "-" + 0 + event.target.value;
     this.setState({
       date: selectedMonth,
@@ -241,20 +264,34 @@ class App extends Component {
 
   updateIncome = e => {
     e.preventDefault();
-    return fetch(usersUrl + "/" + `${this.state.user.user_id}`, {
-      method: "PATCH",
-      headers: {},
-      body: JSON.stringify({
-        income: Number(e.target.income.value)
-      })
-    }).then(response => response.json());
+    return fetch(
+      usersUrl +
+        "/" +
+        `${
+          this.state.user.user_id !== undefined
+            ? this.state.user.user_id
+            : this.state.user.id
+        }`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          income: Number(e.target.income.value),
+          budget: this.state.user.budget
+        })
+      }
+    ).then(response => response.json());
   };
 
-  addToExpenses=()=>{
+  //updating income changes my budget
+
+  addToExpenses = () => {
     this.setState({
       addToExpense: !this.state.addToExpense
-    })
-  }
+    });
+  };
 
   render() {
     return (
@@ -313,6 +350,7 @@ class App extends Component {
               setBudget={this.setBudget}
               logOut={this.logOut}
               user={this.state.user}
+              fetchUserInfo={this.state.fetchUserInfo}
             />
           )}
         />
@@ -354,11 +392,10 @@ class App extends Component {
             <EditIncome
               updateIncome={this.updateIncome}
               user={this.state.user}
+              fetchUserInfo={this.fetchUserInfo}
             />
           )}
         />
-
-        
       </div>
     );
   }

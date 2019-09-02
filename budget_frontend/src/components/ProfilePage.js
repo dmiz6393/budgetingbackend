@@ -47,21 +47,18 @@ class ProfilePage extends React.Component {
       return expense[0].created_at.includes(this.props.dateNum);
     });
 
-    // console.log(
-    //   dates.forEach(date => {
-    //     this.getMonthNumber(date);
-    //   })
-    // );
-
-    //       console.log(date)
-    // console.log((new Date()).getMonth()+1)
-
     const newNew = dates.map(expense => {
       return expense[0].amount;
     });
     const sum = newNew.reduce((a, b) => a + b, 0);
     return sum;
   };
+
+//   filteredCategories = () => {
+//     const filteredCategory = this.props.user.categories.filter(category => {
+//       return category.expenses[0].created_at.includes(this.props.dateNum);
+//     });
+//   };
 
   render() {
     const data = [
@@ -70,11 +67,12 @@ class ProfilePage extends React.Component {
     ];
 
     const category =
-      this.props.user.categories === undefined
-        ? null
-        : this.props.user.categories.map(category => {
-            return <CategoryCard category={category} />;
-          });
+      this.props.user.categories === undefined ? null : 
+        this.props.user.categories.filter(category => {
+            return category.expenses[0].created_at.includes(this.props.dateNum);
+          }).map(category => {
+        return <CategoryCard category={category} />;
+      }) ;
 
     return (
       <>

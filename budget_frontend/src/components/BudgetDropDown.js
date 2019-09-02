@@ -7,7 +7,7 @@ import { Dropdown, Button } from "semantic-ui-react";
 class CategoryDropDown extends Component {
   state = {
     value: "Education",
-    showForm: true
+    showNext: false
   };
 
   handleChange = event => {
@@ -16,6 +16,12 @@ class CategoryDropDown extends Component {
       value: event.target.value
     });
   };
+
+  showNextBtn=()=>{
+this.setState({
+  showNext: !this.state.showNext
+})
+  }
 
   render() {
     const trans = this.props.categories.map(category => {
@@ -76,8 +82,15 @@ class CategoryDropDown extends Component {
         {this.props.showCostDropDown ? trans : null}
         <div>
           <Button onClick={this.props.fetchUserInfo}>
-            See my profile
+            <h5 onClick={this.showNextBtn}>Done for now </h5>
           </Button>
+{this.state.showNext ? 
+        <Link to ="/profile">
+          <Button>
+            Next
+          </Button>
+          </Link> :null 
+          }
         </div>
       </>
     );
