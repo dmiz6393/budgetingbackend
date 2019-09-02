@@ -199,10 +199,8 @@ class App extends Component {
           budget: budget
         })
       }
-    ).then(response => response.json()).then(res=>this.setState({
-      income: res.income, 
-      budget:res.budget 
-    }))
+    ).then(response => response.json())
+    this.fetchUserInfo()
   };
 
   handleSubmitCategory = (event, value) => {
@@ -321,7 +319,8 @@ class App extends Component {
         category_id: category.id,
         amount: Number(category.expenses[0].amount) + Number(e.target.exp.value)
       })
-    }).then(response => response.json()).then(res=>console.log(res))
+    }).then(response => response.json())
+    this.fetchUserInfo()
   };
 
   render() {
