@@ -84,7 +84,7 @@ class BudgetCalculator extends Component {
               To save this, your monthly budget should be {this.state.budget}
             </h1>{" "}
             <Button onClick={this.handleClick}>Set this as my budget</Button>{" "}
-            {this.state.showArrow ? (
+            {this.state.showArrow && this.props.newUser ? (
               <div>
                 <NavLink to="/expenses">
                   <Icon className="angle double right icon huge inverted"/>
@@ -99,6 +99,14 @@ class BudgetCalculator extends Component {
             )}
           </>
         ) : null}
+
+        {this.props.existingUser ? (
+              <NavLink to="/profile">
+              <Button>
+               Back to my profile
+              </Button>
+              </NavLink>
+            ): null}
       </Container>
     );
   }

@@ -36,7 +36,9 @@ class App extends Component {
     categories: [],
     showCostDropDown: false,
     date: null,
-    dateNum: null
+    dateNum: null,
+    existingUser: false, 
+    newUser: false 
   };
 
   componentDidMount() {
@@ -63,9 +65,10 @@ class App extends Component {
           user_id: user.id,
           first_name: user.first_name,
           last_name: user.last_name,
-          income: user.income
+          income: user.income,
         },
-        redirectSignUp: true
+        redirectSignUp: true, 
+        newUser: true 
       });
     });
   };
@@ -81,7 +84,8 @@ class App extends Component {
           budget: user.budget,
           categories: user.categories
         },
-        redirectSignIn: true
+        redirectSignIn: true,
+        existingUser: true
       })
     );
   };
@@ -199,8 +203,7 @@ class App extends Component {
           budget: budget
         })
       }
-    ).then(response => response.json())
-    this.fetchUserInfo()
+    ).then(response => response.json()).then(()=>this.fetchUserInfo())
   };
 
   handleSubmitCategory = (event, value) => {
@@ -219,7 +222,8 @@ class App extends Component {
       .then(res =>
         this.setState({
           categories: [...this.state.categories, res],
-          showCostDropDown: true
+          showCostDropDown: true, 
+          existingUser: true 
         })
       );
   };
@@ -228,15 +232,14 @@ class App extends Component {
     event.preventDefault();
 
     fetch(categoriesUrl, {
-      method: "POST", // *GET, POST, PUT, DELETE, etc.
+      method: "POST", 
       headers: {
         "Content-Type": "application/json"
-        // 'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: JSON.stringify({
         name: event.target.expense.value,
         user_id: this.state.user.user_id
-      }) // body data type must match "Content-Type" header
+      }) 
     })
       .then(response => response.json())
       .then(res =>
@@ -298,12 +301,7 @@ class App extends Component {
         })
       }
     ).then(response => response.json())
-      .then(res =>
-        this.setState({
-          income: res.income,
-          budget: res.budget
-        })
-      );
+    .then(()=>this.fetchUserInfo())
   };
 
   //updating income changes my budget
@@ -367,6 +365,8 @@ class App extends Component {
               setBudget={this.setBudget}
               logOut={this.logOut}
               user={this.state.user}
+              existingUser={this.state.existingUser}
+              newUser={this.state.newUser}
             />
           )}
         />
@@ -380,6 +380,8 @@ class App extends Component {
               logOut={this.logOut}
               user={this.state.user}
               fetchUserInfo={this.state.fetchUserInfo}
+              existingUser={this.state.existingUser}
+              newUser={this.state.newUser}
             />
           )}
         />
