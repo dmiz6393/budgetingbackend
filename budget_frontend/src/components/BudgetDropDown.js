@@ -6,7 +6,8 @@ import {Button } from "semantic-ui-react";
 class CategoryDropDown extends Component {
   state = {
     value: "Education",
-    showNext: false
+    showNext: false,
+    allowDone: false 
   };
 
   // shouldComponentUpdate(nextProps, nextState)
@@ -14,12 +15,10 @@ class CategoryDropDown extends Component {
   componentDidMount(){
     this.setState({
     value: "Education",
-    showNext: false
+    showNext: false, 
+    allowDone: false
     })
   }
-
-  componentWillUnmount(){}
-
 
   handleChange = event => {
     event.preventDefault();
@@ -30,9 +29,24 @@ class CategoryDropDown extends Component {
 
   showNextBtn=()=>{
 this.setState({
-  showNext: !this.state.showNext
+  showNext: true, 
+  allowDone:false
 })
   }
+
+  allowDoneHandler=()=>{
+    this.setState({
+      allowDone: true
+    })
+  }
+
+    handleSubmitOwn=(e)=>{
+      this.props.handleOwnSubmitCategory(e)
+      this.setState({
+        value:"Education"
+      })
+    }
+ 
 
   render() {
     const trans = this.props.categories.map(category => {
@@ -40,6 +54,7 @@ this.setState({
         <Transactions
           setCategoryCost={this.props.setCategoryCost}
           category={category}
+          allowDoneHandler={this.allowDoneHandler}
         />
       );
     });
@@ -78,12 +93,12 @@ this.setState({
           </select>
 
           {this.state.value === "Add" ? (
-            <form onSubmit={this.props.handleOwnSubmitCategory}>
+            <form onSubmit={this.handleSubmitOwn}>
               <input name="expense" type="text"></input>
               <input type="submit" value="Submit" />
             </form>
           ) : (
-            <Button>
+            <Button onClick={this.addBtn}>
               {" "}
               <input type="submit" value="Add" />{" "}
             </Button>
@@ -92,9 +107,10 @@ this.setState({
 
         {this.props.showCostDropDown ? trans : null}
         <div>
+          {this.state.allowDone ? 
           <Button onClick={this.props.fetchUserInfo}>
             <h5 onClick={this.showNextBtn}>Done for now </h5>
-          </Button>
+          </Button> : <div></div>}
 {this.state.showNext ? 
         <Link to ="/profile">
           <Button >

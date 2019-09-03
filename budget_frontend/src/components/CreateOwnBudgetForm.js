@@ -4,7 +4,8 @@ import { Button } from "semantic-ui-react";
 
 class CreateOwnBudgetForm extends Component {
   state = {
-    budget: 0
+    budget: 0,
+    showNext: false
   };
 
   submitButton = event => {
@@ -14,22 +15,42 @@ class CreateOwnBudgetForm extends Component {
     });
   };
 
+  showNxt=()=>{
+    this.setState({
+      showNext: true
+    })
+  }
+
   render() {
     return (
       <div>
         <form onSubmit={e => this.props.setBudget(e, this.state.budget)}>
           <input onChange={this.submitButton} name="budget" type="number" />
-         <Button><input type="submit" /></Button> 
+          <Button >
+            <input onClick={this.showNxt} type="submit" />
+          </Button>
         </form>
-          <Link to= '/profile' ><Button> My profile</Button> </Link>
-          <Link to= '/expenses' ><Button> My expenses</Button> </Link>
+        <div>
+        {this.state.showNext && this.props.existingUser ? (
+          <Button>
+            <Link to="/profile"> My Profile</Link>
+          </Button>
+        ) : (
+          <div></div>
+        )}
+
+        {this.state.showNext && this.props.newUser ? (
+          <Button>
+            {" "}
+            <Link to="/expenses">My Expenses </Link>
+          </Button>) 
+          :(<div></div>)
+        }
+        
+        </div>
       </div>
-      
     );
   }
 }
 
 export default CreateOwnBudgetForm;
-
-
-

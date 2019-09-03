@@ -9,7 +9,7 @@ class Transactions extends Component {
           onSubmit={(e)=>this.props.setCategoryCost(e, this.props.category)}
         >
           <input name="cost" type="number" placeholder="cost"></input>
-          <input type="submit"/> 
+          <input onClick={this.props.allowDoneHandler} type="submit"/> 
         </form>
       </div>
     );
