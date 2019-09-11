@@ -34,7 +34,7 @@ class Api::V1::UsersController < ApplicationController
             # needed to correctly namespace serializer ...
             render json: { user: UserSerializer.new(@user), jwt: @token}, status: :created
         else
-            render json: { error: 'failed to create user' }, status: :not_acceptable
+            render json: { error: 'Failed to create user', messages: @user.errors.full_messages }
         end
     end
 
