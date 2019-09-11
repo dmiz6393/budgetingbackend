@@ -10,7 +10,7 @@ class Api::V1::UsersController < ApplicationController
     end
 
     def show
-        user=User.find params[:id]
+        user = set_current_user
         render json: user, include: '*.*.*' 
     end 
 
