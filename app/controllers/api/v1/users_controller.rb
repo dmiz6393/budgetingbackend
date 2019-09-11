@@ -6,12 +6,12 @@ class Api::V1::UsersController < ApplicationController
     end
 
     def profile
-        render json: { user: UserSerializer.new(current_user) }, status: :accepted
-    end
-
-    def show
         user = set_current_user
-        render json: user, include: '*.*.*' 
+        if user
+            render json: user, include: '*.*.*'
+        else
+            render json: { error: 'You need a token.' }, status: 401
+        end
     end 
 
     def edit 
