@@ -19,11 +19,15 @@ class Api::V1::UsersController < ApplicationController
         render json: user 
     end 
 
-    def update 
-        @user= User.find params[:id]
-        if @user.update(budget: params[:budget].to_i, income: params[:income], goals:params[:goals] )
-            render json: @user
-        end
+    def update
+        user = set_current_user
+        if user
+            if @user.update(budget: params[:budget].to_i, income: params[:income], goals:params[:goals] )
+                render json: @user
+            end
+        else
+            render json: { error: 'You need a token.' }, status: 401
+        end        
     end 
 
     
